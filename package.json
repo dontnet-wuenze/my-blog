@@ -1,0 +1,31 @@
+{
+   "name": "nodejs-blog",
+   "version": "1.0.0",
+   "description": "try to build a blog",
+   "main": "index.js",
+   "author": "dotnet <alex0132@163.com>",
+   "license": "MIT",
+   "devDependencies": {
+      "@types/koa": "^2.0.45",
+      "@types/koa-bodyparser": "^4.2.0",
+      "@types/koa-router": "^7.0.27",
+      "@types/node": "^8.0.29",
+      "typescript": "3.3.3333",
+      "ts-node": "3.3.0"
+   },
+   "dependencies": {
+      "ejs": "^3.0.1",
+      "koa": "^2.5.0",
+      "koa-body": "^4.1.1",
+      "koa-bodyparser": "^4.2.0",
+      "koa-ejs": "^4.3.0",
+      "koa-router": "^7.4.0",
+      "koa-session": "^5.13.1",
+      "mysql": "^2.14.1",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.2.21"
+   },
+   "scripts": {
+      "start": "ts-node src/index.ts"
+   }
+}
