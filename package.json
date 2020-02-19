@@ -14,13 +14,17 @@
       "ts-node": "3.3.0"
    },
    "dependencies": {
+      "config-lite": "^2.1.0",
       "ejs": "^3.0.1",
       "koa": "^2.5.0",
       "koa-body": "^4.1.1",
       "koa-bodyparser": "^4.2.0",
       "koa-ejs": "^4.3.0",
+      "koa-mysql-session": "0.0.2",
       "koa-router": "^7.4.0",
       "koa-session": "^5.13.1",
+      "koa-session-minimal": "^3.0.4",
+      "koa-static": "^5.0.0",
       "mysql": "^2.14.1",
       "reflect-metadata": "^0.1.10",
       "typeorm": "0.2.21"
