@@ -18,6 +18,7 @@
       "config-lite": "^2.1.0",
       "ejs": "^3.0.1",
       "koa": "^2.5.0",
+      "koa-better-flash": "0.0.4",
       "koa-body": "^4.1.1",
       "koa-bodyparser": "^4.2.0",
       "koa-ejs": "^4.3.0",

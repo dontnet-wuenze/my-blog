@@ -11,10 +11,11 @@ createConnection().then(async connection => {
     const MysqlSession = require('koa-mysql-session');
     const render = require('koa-ejs');
     const Koa  = require('koa');
-    const flash = require('koa-flash');
+    const flash = require('koa-better-flash');
     const Static = require('koa-static');
     const Router = require('koa-router');
     const koaBody = require('koa-body');
+    const pkg = require('../package')
     const router = new Router();
     const route = require('./routes');
     const app = new Koa();
@@ -52,6 +53,16 @@ createConnection().then(async connection => {
     /*  app
       .use(controller())
       .use(router.allowedMethods());*/
+      app.use(async (ctx, next) =>{
+        ctx.state.blog = {
+          title: pkg.name,
+          description: pkg.description
+        }
+        ctx.state.user = ctx.session.user
+      //  ctx.state.success = ctx.flash('success').toString()
+       // ctx.state.error = ctx.flash('error').toString()
+        next()
+      })
       route(app);
 
       app.use(async (ctx : any) => {

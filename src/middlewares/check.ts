@@ -1,7 +1,7 @@
 module.exports = {
     checkLogin: async  (ctx, next) =>{
       if (!ctx.session.user) {
-        ctx.res.flash= {error:'未登录'}
+  //      ctx.flash('error','未登录')
         return ctx.redirect('/signin')
       }
       next()
@@ -9,7 +9,7 @@ module.exports = {
   
     checkNotLogin: async (ctx, next) =>{
       if (ctx.session.user) {
-        ctx.res.flash = {error: '已登录'}
+    //    ctx.flash('error', '已登录')
         return ctx.redirect('back')// 返回之前的页面
       }
       next()
