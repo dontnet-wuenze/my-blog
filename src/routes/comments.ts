@@ -1,5 +1,6 @@
+import "reflect-metadata";
 const Router = require("koa-router");
-router = new Router();
+const router = new Router();
 const checkLogin = require('../middlewares/check').checkLogin
 
 // POST /comments 创建一条留言

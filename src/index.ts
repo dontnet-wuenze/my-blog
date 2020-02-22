@@ -1,24 +1,26 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {User} from "./entity/User";
-import Router = require("koa-router");
+//import Router = require("koa-router");
 const controller = require('./controller');
 
 createConnection().then(async connection => {
     const path = require('path');
-    const config = require('config-lite')(__dirname)
+    const config = require('config-lite')(path.join(__dirname, '..'  ));
     const session = require('koa-session-minimal');
     const MysqlSession = require('koa-mysql-session');
     const render = require('koa-ejs');
     const Koa  = require('koa');
+    const flash = require('koa-flash');
     const Static = require('koa-static');
     const Router = require('koa-router');
     const koaBody = require('koa-body');
     const router = new Router();
+    const route = require('./routes');
     const app = new Koa();
 
     render(app,{
-        root: path.join(__dirname, 'views'),
+        root: path.join(__dirname, '../views'),
         layout: false,
         viewExt: 'ejs',
         cache: false,
@@ -47,9 +49,10 @@ createConnection().then(async connection => {
       app.use(koaBody());
     
 
-      app
+    /*  app
       .use(controller())
-      .use(router.allowedMethods());
+      .use(router.allowedMethods());*/
+      route(app);
 
       app.use(async (ctx : any) => {
           ctx.status = 404;

@@ -1,7 +1,11 @@
+import "reflect-metadata";
+const Router = require('koa-router');
+const router = new Router();
+
 module.exports = function (app) {
-    app.get('/',   (ctx) =>{
+    app.use(router.get('/',   (ctx) =>{
       ctx.redirect('/posts')
-    })
+    }).routes())
     app.use('/signup', require('./signup'))
     app.use('/signin', require('./signin'))
     app.use('/signout', require('./signout'))

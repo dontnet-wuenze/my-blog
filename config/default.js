@@ -7,8 +7,8 @@ module.exports = {
     },
     mysqldb : {
         user: 'root',
-        password: 'abc123',
-        database: 'koa_demo',
+        password: '123456',
+        database: 'session',
         host: '127.0.0.1',
     },
     cookie :{
