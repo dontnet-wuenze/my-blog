@@ -40,4 +40,4 @@ router.get('/:postId/remove', checkLogin,  (ctx) =>{
 ctx.body = ('删除文章')
 })
 
-module.exports = router
+module.exports = router.routes()

@@ -9,4 +9,4 @@ router.get('/', checkLogin, (ctx) =>{
   ctx.body = ('登出')
 })
 
-module.exports = router
+module.exports = router.routes()

@@ -14,4 +14,4 @@ router.post('/', checkNotLogin, (ctx) =>{
 ctx.body = ('登录')
 })
 
-module.exports = router
+module.exports = router.routes()
