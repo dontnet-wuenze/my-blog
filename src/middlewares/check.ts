@@ -4,7 +4,7 @@ module.exports = {
   //      ctx.flash('error','未登录')
         return ctx.redirect('/signin')
       }
-      next()
+      await next();
     },
   
     checkNotLogin: async (ctx, next) =>{
@@ -12,6 +12,6 @@ module.exports = {
     //    ctx.flash('error', '已登录')
         return ctx.redirect('back')// 返回之前的页面
       }
-      next()
+      await next();
     }
   }
