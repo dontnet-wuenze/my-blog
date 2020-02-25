@@ -8,7 +8,7 @@ module.exports = {
     mysqldb : {
         user: 'root',
         password: '123456',
-        database: 'session',
+        database: 'my_blog',
         host: '127.0.0.1',
     },
     cookie :{

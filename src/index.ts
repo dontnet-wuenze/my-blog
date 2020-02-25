@@ -59,9 +59,9 @@ createConnection().then(async connection => {
           description: pkg.description
         }
         ctx.state.user = ctx.session.user
-      //  ctx.state.success = ctx.flash('success').toString()
-       // ctx.state.error = ctx.flash('error').toString()
-        next()
+        ctx.state.success = ctx.flash('success').toString()
+        ctx.state.error = ctx.flash('error').toString()
+        await next()
       })
       route(app);
 

@@ -33,6 +33,7 @@
       "typeorm": "0.2.21"
    },
    "scripts": {
-      "start": "ts-node src/index.ts"
+      "start": "ts-node src/index.ts",
+      "test" : "ts-node src/test.ts"
    }
 }
