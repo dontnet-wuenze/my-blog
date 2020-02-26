@@ -1,8 +1,11 @@
 import "reflect-metadata";
 import { resolve } from "url";
+import{User} from "../entity/User";
+import { getRepository } from "typeorm";
 const Router = require('koa-router')
 const router = new Router()
 const path = require('path')
+const sha1 = require('sha1')
 const fs = require('fs')
 
 const checkNotLogin = require('../middlewares/check').checkNotLogin
@@ -18,12 +21,12 @@ router.get('/',  checkNotLogin, async (ctx, next) =>{
 router.post('/', checkNotLogin, async (ctx, next) =>{
   ctx.body = JSON.stringify(ctx.request.files);
   ctx.type = 'application/json';
-  console.log(ctx.request.body);
-  console.log(ctx.request.files);
+  //console.log(ctx.request.body);
+  //console.log(ctx.request.files);
   const name = ctx.request.body.name || "";
   const gender = ctx.request.body.gender || ""
   const bio = ctx.request.body.bio || ""
-  //const avatar = ctx.request.files.avatar.path.split(path.sep).pop()
+  const avatar = ctx.request.files.avatar.path.split(path.sep).pop()
   let password = ctx.request.body.password || ""
   const repassword = ctx.request.body.repassword || ""
 
@@ -57,7 +60,7 @@ router.post('/', checkNotLogin, async (ctx, next) =>{
     ctx.flash('error', e.message)
     return ctx.redirect('/signup')
   }
-/*
+
   // 明文密码加密
   password = sha1(password)
 
@@ -69,7 +72,27 @@ router.post('/', checkNotLogin, async (ctx, next) =>{
     bio: bio,
     avatar: avatar
   }
-  // 用户信息写入数据库
+  try {
+    let userRepository = getRepository(User);
+    await userRepository.insert(user);
+    console.log(user);
+    delete user.password;
+    ctx.session.user = user;
+    ctx.flash('seccess', '注册成功');
+    ctx.redirect('/posts');
+  }catch(err){
+    fs.unlink(ctx.request.files.avatar.path, (err) => {
+      console.log("file was deleted");
+    })
+    console.log(err.message);
+    // 用户名被占用则跳回注册页，而不是错误页
+    if (err.message.match('ER_DUP_ENTRY')) {
+      ctx.flash('error', '用户名已被占用')
+      return ctx.redirect('/signup')
+    }
+    await next(err)
+  }
+/*  // 用户信息写入数据库
   UserModel.create(user)
     .then(function (result) {
       // 此 user 是插入 mongodb 后的值，包含 _id
