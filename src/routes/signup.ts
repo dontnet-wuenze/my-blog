@@ -2,6 +2,8 @@ import "reflect-metadata";
 import { resolve } from "url";
 const Router = require('koa-router')
 const router = new Router()
+const path = require('path')
+const fs = require('fs')
 
 const checkNotLogin = require('../middlewares/check').checkNotLogin
 
@@ -14,12 +16,16 @@ router.get('/',  checkNotLogin, async (ctx, next) =>{
 
 // POST /signup 用户注册
 router.post('/', checkNotLogin, async (ctx, next) =>{
-  /*const name = req.fields.name
-  const gender = req.fields.gender
-  const bio = req.fields.bio
-  const avatar = req.files.avatar.path.split(path.sep).pop()
-  let password = req.fields.password
-  const repassword = req.fields.repassword
+  ctx.body = JSON.stringify(ctx.request.files);
+  ctx.type = 'application/json';
+  console.log(ctx.request.body);
+  console.log(ctx.request.files);
+  const name = ctx.request.body.name || "";
+  const gender = ctx.request.body.gender || ""
+  const bio = ctx.request.body.bio || ""
+  //const avatar = ctx.request.files.avatar.path.split(path.sep).pop()
+  let password = ctx.request.body.password || ""
+  const repassword = ctx.request.body.repassword || ""
 
   // 校验参数
   try {
@@ -32,7 +38,7 @@ router.post('/', checkNotLogin, async (ctx, next) =>{
     if (!(bio.length >= 1 && bio.length <= 30)) {
       throw new Error('个人简介请限制在 1-30 个字符')
     }
-    if (!req.files.avatar.name) {
+    if (!ctx.request.files.avatar.name) {
       throw new Error('缺少头像')
     }
     if (password.length < 6) {
@@ -43,11 +49,15 @@ router.post('/', checkNotLogin, async (ctx, next) =>{
     }
   } catch (e) {
     // 注册失败，异步删除上传的头像
-    fs.unlink(req.files.avatar.path)
-    req.flash('error', e.message)
-    return res.redirect('/signup')
+    fs.unlink(ctx.request.files.avatar.path, (err) => {
+      if(err)
+        throw(err);
+      console.log("file was deleted");
+    })
+    ctx.flash('error', e.message)
+    return ctx.redirect('/signup')
   }
-
+/*
   // 明文密码加密
   password = sha1(password)
 
@@ -66,18 +76,18 @@ router.post('/', checkNotLogin, async (ctx, next) =>{
       user = result.ops[0]
       // 删除密码这种敏感信息，将用户信息存入 session
       delete user.password
-      req.session.user = user
+      request.session.user = user
       // 写入 flash
-      req.flash('success', '注册成功')
+      request.flash('success', '注册成功')
       // 跳转到首页
       res.redirect('/posts')
     })
     .catch(function (e) {
       // 注册失败，异步删除上传的头像
-      fs.unlink(req.files.avatar.path)
+      fs.unlink(request.files.avatar.path)
       // 用户名被占用则跳回注册页，而不是错误页
       if (e.message.match('duplicate key')) {
-        req.flash('error', '用户名已被占用')
+        request.flash('error', '用户名已被占用')
         return res.redirect('/signup')
       }
       next(e)
