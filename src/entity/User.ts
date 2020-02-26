@@ -1,10 +1,10 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
 export type gender = 'm'| 'f' | 'x';
 
 @Entity()
 export class User {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     name: string;
 
     @Column()
