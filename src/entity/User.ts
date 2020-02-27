@@ -21,7 +21,7 @@ export class User {
     gender : gender;
 
     @Column()
-    bio : string
+    bio : string;
 }
 
 
