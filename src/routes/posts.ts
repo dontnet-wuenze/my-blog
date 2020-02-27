@@ -7,17 +7,17 @@ const checkLogin = require('../middlewares/check').checkLogin
 // GET /posts 所有用户或者特定用户的文章页
 //   eg: GET /posts?author=xxx
 router.get('/',  async (ctx, next) =>{
- await ctx.render('post');
+    await ctx.render('post');
 })
 
 // POST /posts/create 发表一篇文章
 router.post('/create', checkLogin, async (ctx, next) =>{
-ctx.body = ('发表文章')
+    await ctx.render('create');
 })
 
 // GET /posts/create 发表文章页
 router.get('/create', checkLogin, async (ctx, next) =>{
-ctx.body = ('发表文章页')
+    await ctx.render('create');
 })
 
 // GET /posts/:postId 单独一篇的文章页
