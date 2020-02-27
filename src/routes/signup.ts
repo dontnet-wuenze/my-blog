@@ -78,7 +78,7 @@ router.post('/', checkNotLogin, async (ctx, next) =>{
     console.log(user);
     delete user.password;
     ctx.session.user = user;
-    ctx.flash('seccess', '注册成功');
+    ctx.flash('success', '注册成功');
     ctx.redirect('/posts');
   }catch(err){
     fs.unlink(ctx.request.files.avatar.path, (err) => {
