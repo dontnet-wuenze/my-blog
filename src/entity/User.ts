@@ -3,6 +3,8 @@ export type gender = 'm'| 'f' | 'x';
 
 @Entity()
 export class User {
+    @PrimaryGeneratedColumn()
+    _id : number;
 
     @PrimaryColumn()
     name: string;

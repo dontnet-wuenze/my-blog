@@ -2,6 +2,8 @@ import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
 
 @Entity()
 export class Post {
+    @PrimaryGeneratedColumn()
+    _id: number;
 
     @PrimaryColumn()
     author: number;
@@ -12,8 +14,8 @@ export class Post {
     @Column()
     content: string;
 
-    @Column()
-    pv: number = 0;
+    @Column({default : 0})
+    pv: number;
 }
 
 /*
