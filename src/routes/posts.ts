@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Post } from "../entity/Post";
-import { getRepository } from "typeorm";
+import { getRepository, EntityManager } from "typeorm";
 const Router = require('koa-router');
 const router = new Router();
 
@@ -86,43 +86,40 @@ router.get('/:postId', async (ctx, next) =>{
     const postId = ctx.params.postId
 
     let postRepository = getRepository(Post);
+    const postManager = postRepository.manager;
+    
+    try {
+      let post = await postRepository.findOne({"_id" : postId});
+      await postManager.increment(Post, {_id : postId}, "pv", 1)
 
-    Promise.all([
-        postRepository.findOne(postId),
-        postRepository
-        .createQueryBuilder()
-        .update("post")
-        .set({pv: () => "'pv' + 1"
-        })
-        .execute()
-
+      if(!post) {
+        throw new Error('该文章不存在');
+      }
+      await ctx.render('post', {
+          post : post
+      })
+    } catch(err) {
+      console.log(err);
+    }
+    /*Promise.all([
+        await postRepository.findOne({"_id" : postId}),
+        await postManager.increment(Post, {_id : postId}, "pv", 1)
     ]) 
-      .then(async result => {
+      .then(result => {
         const post = result[0];
+        console.log(result);
+        console.log(post);
         if(!post) {
             throw new Error('该文章不存在');
         }
-
-        await ctx.render('post', {
+        //ctx.body = post;
+        ctx.render('post', {
             post : post
         })
       })
-      .catch(await next())
-   /* Promise.all([
-      PostModel.getPostById(postId), // 获取文章信息
-      PostModel.incPv(postId)// pv 加 1
-    ])
-      .then(function (result) {
-        const post = result[0]
-        if (!post) {
-          throw new Error('该文章不存在')
-        }
-  
-        res.render('post', {
-          post: post
-        })
-      })
-      .catch(next)*/
+      .catch(err => {
+        console.log(err);
+      })*/
 })
 
 // GET /posts/:postId/edit 更新文章页
