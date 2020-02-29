@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Post } from "../entity/Post";
 import { getRepository, EntityManager } from "typeorm";
+import { create } from "domain";
 const Router = require('koa-router');
 const router = new Router();
 
@@ -14,12 +15,12 @@ router.get('/',  async (ctx, next) => {
         let postRepository = getRepository(Post);
         let posts = await postRepository.find(author);
         console.log(posts);
-        await ctx.render('post', {
+        await ctx.render('posts', {
             posts : posts
         })
     } catch(err) {
-        throw err;
-        await next(err);
+        console.log(err);
+        await next();
     }
   /*PostModel.getPosts(author)
     .then(function (posts) {
@@ -124,12 +125,94 @@ router.get('/:postId', async (ctx, next) =>{
 
 // GET /posts/:postId/edit 更新文章页
 router.get('/:postId/edit', checkLogin, async (ctx, next) =>{
-ctx.body = ('更新文章页')
+  const postId = ctx.params.postId
+  const author = ctx.session.user._id
+
+  const postRepository = getRepository(Post);
+
+  try {
+      let post = await postRepository.findOne({"_id" : postId});
+      if(!post) {
+        throw new Error('该文章不存在');
+      }
+      if(author.toString() !== post.author.toString()) {
+        throw new Error('权限不足')
+      }
+      await ctx.render('edit', {
+        post : post
+      })
+  } catch(err) {
+        console.log(err);
+  }
+  /*PostModel.getRawPostById(postId)
+    .then(function (post) {
+      if (!post) {
+        throw new Error('该文章不存在')
+      }
+      if (author.toString() !== post.author._id.toString()) {
+        throw new Error('权限不足')
+      }
+      res.render('edit', {
+        post: post
+      })
+    })
+    .catch(next)*/
 })
 
 // POST /posts/:postId/edit 更新一篇文章
 router.post('/:postId/edit', checkLogin, async (ctx, next) =>{
-ctx.body = ('更新文章')
+  const postId = ctx.params.postId
+  const author = ctx.session.user._id
+  const title = ctx.request.body.title
+  const content = ctx.request.body.content
+
+  const postRepository = getRepository(Post);
+
+  // 校验参数
+  try {
+    if (!title.length) {
+      throw new Error('请填写标题')
+    }
+    if (!content.length) {
+      throw new Error('请填写内容')
+    }
+  } catch (err) {
+    ctx.flash('error', err.message)
+    return ctx.redirect('back')
+  }
+
+  try {
+    let post = await postRepository.findOne({_id : postId});
+    if(!post) {
+      throw new Error('文章不存在');
+    }
+    if(post.author.toString() !== author.toString()) {
+      throw new Error('没有权限');
+    }
+
+    await postRepository.update(postId, {title : title, content : content});
+    ctx.flash('success', '编辑成功');
+    ctx.redirect(`/post/${postId}`);
+  } catch (err) {
+    console.log(err);
+    await next();
+  }
+  /*PostModel.getRawPostById(postId)
+    .then(function (post) {
+      if (!post) {
+        throw new Error('文章不存在')
+      }
+      if (post.author._id.toString() !== author.toString()) {
+        throw new Error('没有权限')
+      }
+      PostModel.updatePostById(postId, { title: title, content: content })
+        .then(function () {
+          req.flash('success', '编辑文章成功')
+          // 编辑成功后跳转到上一页
+          res.redirect(`/posts/${postId}`)
+        })
+        .catch(next)
+    })*/
 })
 
 // GET /posts/:postId/remove 删除一篇文章
