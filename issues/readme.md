@@ -10,7 +10,9 @@
 
 ## 问题列表
 
-* tissue1: 对数据库中的数据进行个性化修改
+* issue1: 对数据库中的数据进行个性化修改
 
-* tissue2: promise 嵌套 await 的 使用
+* issue2: promise 嵌套 await 的 使用
+
+* issue3: koa 中的错误处理
 
