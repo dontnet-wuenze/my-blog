@@ -65,6 +65,20 @@ createConnection().then(async connection => {
     /*  app
       .use(controller())
       .use(router.allowedMethods());*/
+
+      app.use(async (ctx, next) => {
+        try {
+          await next();
+        } catch (err) {
+          /*ctx.status = err.status || 500;
+          ctx.body = err.message;
+          ctx.app.emit('error', err, ctx);*/
+          console.error(err)
+          ctx.flash('error', err.message)
+          ctx.redirect('/posts')
+        }
+      });
+
       app.use(async (ctx, next) =>{
         ctx.state.blog = {
           title: pkg.name,
@@ -77,7 +91,7 @@ createConnection().then(async connection => {
       })
       route(app);
 
-      app.use(async (ctx : any) => {
+      app.use(async (ctx : any, next : any) => {
           ctx.status = 404;
           ctx.body = "ERR";
         });

@@ -107,7 +107,7 @@ router.get('/:postId/edit', checkLogin, async (ctx, next) =>{
         post : post
       })
   } catch(err) {
-        console.log(err);
+    throw err;
   }
 })
 
