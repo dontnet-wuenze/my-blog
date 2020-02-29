@@ -23,7 +23,14 @@ module.exports = function (app) {
     router.use('/signout', require('./signout'))
     router.use('/posts', require('./posts'))  
     router.use('/comments', require('./comments'))
-      app
-        .use(router.routes())
-        .use(router.allowedMethods());
+    app
+      .use(router.routes())
+      .use(router.allowedMethods());
+    
+    app.use(async (ctx, next) =>{
+      if (!ctx.headersSent) {
+        ctx.status = 404;
+        await ctx.render('404');
+      }
+    })
   }
