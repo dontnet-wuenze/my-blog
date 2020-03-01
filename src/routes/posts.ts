@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Post } from "../entity/Post";
-import { getRepository, EntityManager } from "typeorm";
-import { create } from "domain";
+import { Comment } from "../entity/Comment";
+import { getRepository } from "typeorm";
 const Router = require('koa-router');
 const router = new Router();
 
@@ -55,8 +55,7 @@ router.post('/create', checkLogin, async (ctx, next) =>{
         ctx.flash('success', '发表成功');
         ctx.redirect(`${article._id}`);
     } catch(err) {
-        console.log(err);
-        await next(err);
+        throw err;
     }
   
 })
@@ -71,20 +70,23 @@ router.get('/:postId', async (ctx, next) =>{
     const postId = ctx.params.postId
 
     let postRepository = getRepository(Post);
+    let commentRepository = getRepository(Comment);
     const postManager = postRepository.manager;
     
     try {
       let post = await postRepository.findOne({"_id" : postId});
+      let comments = await commentRepository.find({"postId" : postId});
       await postManager.increment(Post, {_id : postId}, "pv", 1)
-
+      
       if(!post) {
         throw new Error('该文章不存在');
       }
       await ctx.render('post', {
-          post : post
+          post : post,
+          comments : comments
       })
     } catch(err) {
-      console.log(err);
+      throw err;
     }
 })
 
