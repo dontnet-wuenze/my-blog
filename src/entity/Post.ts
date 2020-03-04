@@ -1,12 +1,10 @@
-import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
+import {Entity, OneToOne, JoinColumn, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
+import {User} from "../entity/User"
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
     _id: number;
-
-    @PrimaryColumn()
-    author: number;
 
     @Column()
     title: string;
@@ -16,6 +14,10 @@ export class Post {
 
     @Column({default : 0})
     pv: number;
+
+    @OneToOne(type => User)
+    @JoinColumn()
+    author: User;
 }
 
 /*

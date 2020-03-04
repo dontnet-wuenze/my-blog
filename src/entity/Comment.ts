@@ -1,16 +1,20 @@
-import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
+import {Entity, OneToOne, JoinColumn, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
+import {User} from "../entity/User"
+import {Post} from "../entity/Post"
 
 @Entity()
 export class Comment {
     @PrimaryGeneratedColumn()
     _id: number;
 
-    @Column()
-    author: number;
+    @OneToOne(type => User)
+    @JoinColumn()
+    author: User;
 
     @Column()
     content: string;
 
-    @Column()
-    postId: number;
+    @OneToOne(type => Post)
+    @JoinColumn()
+    PoseId: Post;
 }   
