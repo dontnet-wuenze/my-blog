@@ -14,7 +14,7 @@ router.get('/',  async (ctx, next) => {
     try {
         let postRepository = getRepository(Post);
         let posts = await postRepository.find(author);
-        console.log(posts);
+        //console.log(posts);
         await ctx.render('posts', {
             posts : posts
         })
@@ -26,7 +26,7 @@ router.get('/',  async (ctx, next) => {
 
 // POST /posts/create 发表一篇文章
 router.post('/create', checkLogin, async (ctx, next) =>{
-    const author = ctx.session.user._id;
+    const author = ctx.session.user;
     const title = ctx.request.body.title;
     const content = ctx.request.body.content;
   
@@ -74,8 +74,9 @@ router.get('/:postId', async (ctx, next) =>{
     const postManager = postRepository.manager;
     
     try {
-      let post = await postRepository.findOne({"_id" : postId});
-      let comments = await commentRepository.find({"postId" : postId});
+      let post = await postRepository.findOne(postId, {relations : ["author"]});
+      let comments = await commentRepository.find({"PostId" : postId});
+      ctx.body = post;
       await postManager.increment(Post, {_id : postId}, "pv", 1)
       
       if(!post) {
@@ -99,10 +100,12 @@ router.get('/:postId/edit', checkLogin, async (ctx, next) =>{
 
   try {
       let post = await postRepository.findOne({"_id" : postId});
+      let test = await postRepository.find({ relations: ["author"] })
+      console.log(test);
       if(!post) {
         throw new Error('该文章不存在');
       }
-      if(author.toString() !== post.author.toString()) {
+      if(author.toString() !== post.author._id.toString()) {
         throw new Error('权限不足')
       }
       await ctx.render('edit', {
@@ -140,7 +143,7 @@ router.post('/:postId/edit', checkLogin, async (ctx, next) =>{
     if(!post) {
       throw new Error('文章不存在');
     }
-    if(post.author.toString() !== author.toString()) {
+    if(post.author._id.toString() !== author.toString()) {
       throw new Error('没有权限');
     }
 
@@ -165,7 +168,7 @@ router.get('/:postId/remove', checkLogin, async (ctx, next) =>{
       if(!post) {
         throw new Error('文章不存在')
       }
-      if(post.author.toString() !== author.toString()) {
+      if(post.author._id.toString() !== author.toString()) {
         throw new Error('没有权限');
       }
       

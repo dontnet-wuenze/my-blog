@@ -8,7 +8,7 @@ const checkLogin = require('../middlewares/check').checkLogin
 
 // POST /comments 创建一条留言
 router.post('/', checkLogin, async (ctx, next) =>{
-  const author = ctx.session.user._id;
+  const author = ctx.session.user;
   const postId = ctx.request.body.postId;
   const content = ctx.request.body.content;
 
