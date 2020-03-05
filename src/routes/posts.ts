@@ -10,10 +10,22 @@ const checkLogin = require('../middlewares/check').checkLogin
 // GET /posts 所有用户或者特定用户的文章页
 //   eg: GET /posts?author=xxx
 router.get('/',  async (ctx, next) => {
-    const author = ctx.query.author
+    let author = ctx.query.author;
+    console.log(author);
+    let posts = [];
     try {
         let postRepository = getRepository(Post);
-        let posts = await postRepository.find(author);
+        //let posts = await postRepository.find({relations : ["author"]});
+        if(author !== undefined) {
+          posts = await postRepository
+                .createQueryBuilder("post")
+                .leftJoinAndSelect("post.author", "author")
+                .where("author._id = :author", { author: author })
+                .getMany();
+        } else {
+          posts = await postRepository.find({relations : ["author"]});
+        }
+
         //console.log(posts);
         await ctx.render('posts', {
             posts : posts
@@ -75,7 +87,7 @@ router.get('/:postId', async (ctx, next) =>{
     
     try {
       let post = await postRepository.findOne(postId, {relations : ["author"]});
-      let comments = await commentRepository.find({"PostId" : postId});
+      let comments = await commentRepository.find(postId);
       ctx.body = post;
       await postManager.increment(Post, {_id : postId}, "pv", 1)
       
@@ -99,9 +111,7 @@ router.get('/:postId/edit', checkLogin, async (ctx, next) =>{
   const postRepository = getRepository(Post);
 
   try {
-      let post = await postRepository.findOne({"_id" : postId});
-      let test = await postRepository.find({ relations: ["author"] })
-      console.log(test);
+      let post = await postRepository.findOne(postId, {relations : ["author"]});
       if(!post) {
         throw new Error('该文章不存在');
       }
@@ -139,7 +149,7 @@ router.post('/:postId/edit', checkLogin, async (ctx, next) =>{
   }
 
   try {
-    let post = await postRepository.findOne({_id : postId});
+    let post = await postRepository.findOne(postId, {relations : ["author"]});
     if(!post) {
       throw new Error('文章不存在');
     }
@@ -164,7 +174,7 @@ router.get('/:postId/remove', checkLogin, async (ctx, next) =>{
   const postRepository = getRepository(Post);
 
   try {
-      let post = await postRepository.findOne({"_id" : postId});
+      let post = await postRepository.findOne(postId, {relations : ["author"]});
       if(!post) {
         throw new Error('文章不存在')
       }
