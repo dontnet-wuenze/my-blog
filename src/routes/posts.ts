@@ -11,7 +11,7 @@ const checkLogin = require('../middlewares/check').checkLogin
 //   eg: GET /posts?author=xxx
 router.get('/',  async (ctx, next) => {
     let author = ctx.query.author;
-    console.log(author);
+    //console.log(author);
     let posts = [];
     try {
         let postRepository = getRepository(Post);
@@ -31,8 +31,7 @@ router.get('/',  async (ctx, next) => {
             posts : posts
         })
     } catch(err) {
-        console.log(err);
-        await next();
+        throw err;
     }
 })
 
@@ -87,8 +86,13 @@ router.get('/:postId', async (ctx, next) =>{
     
     try {
       let post = await postRepository.findOne(postId, {relations : ["author"]});
-      let comments = await commentRepository.find(postId);
-      ctx.body = post;
+      //let comments = await commentRepository.find(postId);
+      let comments = await commentRepository
+                    .createQueryBuilder("comment")
+                    .leftJoinAndSelect("comment.author", "author")
+                    .leftJoinAndSelect("comment.post", "post")
+                    .where("post._id = :_id", {_id : postId})
+                    .getMany();
       await postManager.increment(Post, {_id : postId}, "pv", 1)
       
       if(!post) {

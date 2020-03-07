@@ -14,5 +14,5 @@ export class Comment {
     author: User;
 
     @ManyToOne(type => Post)
-    PostId: Post;
+    post: Post;
 }   
