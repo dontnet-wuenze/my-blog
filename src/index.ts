@@ -1,8 +1,11 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {User} from "./entity/User";
+import { access } from "fs";
+import { format } from "url";
 //import Router = require("koa-router");
 const controller = require('./controller');
+const { accessLogger , logger } = require('../log/logger')
 
 createConnection().then(async connection => {
     const path = require('path');
@@ -19,6 +22,7 @@ createConnection().then(async connection => {
     const router = new Router();
     const route = require('./routes');
     const app = new Koa();
+
 
     render(app,{
         root: path.join(__dirname, '../views'),
@@ -65,6 +69,7 @@ createConnection().then(async connection => {
     /*  app
       .use(controller())
       .use(router.allowedMethods());*/
+      app.use(accessLogger())
 
       app.use(async (ctx, next) => {
         try {
@@ -90,11 +95,15 @@ createConnection().then(async connection => {
         await next()
       })
       route(app);
+      
+      app.on('error', err => {
+        logger.error(err);
+      });
 
       app.use(async (ctx : any, next : any) => {
           ctx.status = 404;
           ctx.body = "ERR";
-        });
+        })
       
         app.listen(3000);
         console.log('app started at port 3000...'); 
