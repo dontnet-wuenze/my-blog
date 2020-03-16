@@ -1,5 +1,9 @@
 import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
-export type gender = 'm'| 'f' | 'x';
+export enum Gender {
+    'm',
+    'f',
+    'x'
+}
 
 @Entity()
 export class User {
@@ -20,7 +24,7 @@ export class User {
         enum : ['m', 'f', 'x'],
         default : 'x'
     })
-    gender : gender;
+    gender : Gender;
 
     @Column()
     bio : string;

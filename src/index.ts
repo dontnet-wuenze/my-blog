@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
-import {User} from "./entity/User";
+import {User, Gender} from "./entity/User";
 import { access } from "fs";
 import { format } from "url";
 //import Router = require("koa-router");
@@ -105,7 +105,13 @@ createConnection().then(async connection => {
           ctx.body = "ERR";
         })
       
-        app.listen(3000);
-        console.log('app started at port 3000...'); 
-
+        if (module.parent) {
+          // 被 require，则导出 app
+          module.exports = app
+        } else {
+          // 监听端口，启动程序
+          app.listen(config.port, function () {
+            console.log(`${pkg.name} listening on port ${config.port}`)
+          })
+        }
 }).catch(error => console.log(error));
