@@ -42,7 +42,7 @@
       "mysql": "^2.14.1",
       "reflect-metadata": "^0.1.10",
       "sha1": "^1.1.1",
-      "typeorm": "0.2.21"
+      "typeorm": "0.2.25"
    },
    "scripts": {
       "start": "ts-node src/index.ts",
